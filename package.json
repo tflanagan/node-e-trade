@@ -1,0 +1,58 @@
+{
+	"name": "e-trade",
+	"version": "0.1.0",
+	"description": "A promise, JSON-based library for interacting with the E-Trade API.",
+	"keywords": [
+		"ETrade",
+		"etrade",
+		"E-Trade",
+		"e-trade",
+		"api"
+	],
+	"homepage": "https://github.com/tflanagan/node-e-trade",
+	"bugs": {
+		"url": "https://github.com/tflanagan/node-e-trade/issues",
+		"email": "contact@tristianflanagan.com"
+	},
+	"license": "Apache-2.0",
+	"author": {
+		"name": "Tristian Flanagan",
+		"url": "https://github.com/tflanagan",
+		"email": "contact@tristianflanagan.com"
+	},
+	"maintainers": [
+		{
+			"name": "tflanagan",
+			"url": "https://github.com/tflanagan",
+			"email": "contact@tristianflanagan.com"
+		}
+	],
+	"contributors": [
+		"Tristian Flanagan <contact@tristianflanagan.com> (https://github.com/tflanagan)"
+	],
+	"main": "./dist/e-trade.js",
+	"types": "./dist/e-trade.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/tflanagan/node-e-trade.git"
+	},
+	"scripts": {
+		"build": "tsc",
+		"cleanup": "rm -rf ./dist/*",
+		"reinstall": "rm -rf node_modules/ && npm install",
+		"reinstall-dev": "rm -rf node_modules/ && npm install && npm install --dev"
+	},
+	"dependencies": {
+		"@types/debug": "^4.1.5",
+		"@types/node": "^13.13.5",
+		"axios": "^0.19.2",
+		"debug": "^4.1.1",
+		"deepmerge": "^4.2.2",
+		"generic-throttle": "^2.0.1",
+		"oauth-1.0a": "^2.2.6"
+	},
+	"engines": {
+		"node": ">=10.14.2"
+	},
+	"git": "git://github.com/tflanagan/node-e-trade.git"
+}
