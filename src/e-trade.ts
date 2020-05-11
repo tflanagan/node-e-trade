@@ -478,7 +478,7 @@ export class ETrade {
 		if(noOfStrikes !== undefined){
 			data.noOfStrikes = noOfStrikes;
 		}
-		
+
 		const requestOptions = this.getBasicRequest({
 			url: 'market/optionchains.json',
 			data: data
@@ -497,7 +497,7 @@ export class ETrade {
 		if(expiryType){
 			data.expiryType = expiryType;
 		}
-		
+
 		const requestOptions = this.getBasicRequest({
 			url: 'market/optionexpiredate.json',
 			data: data
@@ -892,7 +892,7 @@ export interface PreviewOrderRequest {
 	clientOrderId: string | number;
 }
 
-export interface PreviewOrderResponse {	 
+export interface PreviewOrderResponse {
 	previewTime: number;
 	orderType: string;
 	messageList: Messages;
@@ -1704,14 +1704,14 @@ export interface Transaction {
 
 export interface Account {
 	accountId: string;
-    accountIdKey: string;
-    accountMode: string;
-    accountDesc: string;
-    accountName: string;
-    accountType: accountType;
-    institutionType: institutionType;
-    accountStatus: accountStatus;
-    closedDate: number;
+	accountIdKey: string;
+	accountMode: string;
+	accountDesc: string;
+	accountName: string;
+	accountType: accountType;
+	institutionType: institutionType;
+	accountStatus: accountStatus;
+	closedDate: number;
 }
 
 export interface Category {

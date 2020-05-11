@@ -19,14 +19,14 @@ Example
 import { ETrade } from 'e-trade';
 
 const etrade = new ETrade({
-    key: 'key',
-    secret: 'secret'
+	key: 'key',
+	secret: 'secret'
 });
 
 (async () => {
-    try {
+	try {
 		const requestTokenResults = await etrade.requestToken();
-		
+
 		// Visit url, authorize application, copy/paste code below
 
 		const accessTokenResults = await etrade.getAccessToken({
@@ -35,14 +35,14 @@ const etrade = new ETrade({
 			code: 'code from requestTokenResults.url'
 		});
 
-        etrade.settings.accessToken = accessTokenResults.oauth_token;
+		etrade.settings.accessToken = accessTokenResults.oauth_token;
 		etrade.settings.accessSecret = accessTokenResults.oauth_token_secret;
 
-        const results = await etrade.listAccounts();
+		const results = await etrade.listAccounts();
 
-        console.log(results[0].accountName);
-    }catch(err){
-        console.error(err);
-    }
+		console.log(results[0].accountName);
+	}catch(err){
+		console.error(err);
+	}
 })();
 ```
