@@ -1,7 +1,7 @@
 e-trade
 =======
 
-[![npm license](https://img.shields.io/npm/l/@tflanagan/e-trade.svg)](https://www.npmjs.com/package/@tflanagan/e-trade) [![npm version](https://img.shields.io/npm/v/@tflanagan/e-trade.svg)](https://www.npmjs.com/package/@tflanagan/e-trade) [![npm downloads](https://img.shields.io/npm/dm/@tflanagan/e-trade.svg)](https://www.npmjs.com/package/@tflanagan/e-trade)
+[![npm license](https://img.shields.io/npm/l/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api) [![npm version](https://img.shields.io/npm/v/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api) [![npm downloads](https://img.shields.io/npm/dm/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api)
 
 A promise, JSON-based library for interacting with the E-Trade API.
 
@@ -16,7 +16,7 @@ $ npm install e-trade
 Example
 -------
 ```typescript
-import { ETrade } from '@tflanagan/e-trade';
+import { ETrade } from 'e-trade-api';
 
 const etrade = new ETrade({
 	key: 'key',

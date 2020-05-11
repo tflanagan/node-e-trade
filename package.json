@@ -1,5 +1,5 @@
 {
-	"name": "@tflanagan/e-trade",
+	"name": "e-trade-api",
 	"version": "0.1.0",
 	"description": "A promise, JSON-based library for interacting with the E-Trade API.",
 	"keywords": [
