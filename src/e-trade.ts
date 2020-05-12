@@ -65,8 +65,6 @@ export class ETrade {
 			},
 			signature_method: 'HMAC-SHA1',
 			hash_function(base_string, key) {
-				console.log('BASE STRING', base_string);
-				console.log('KEY', key);
 				return crypto.createHmac('sha1', key).update(base_string).digest('base64');
 			}
 		});
@@ -100,13 +98,9 @@ export class ETrade {
 			};
 		}
 
-		if(!omit){
-			options.data = JSON.stringify(options.data);
-		}else{
+		if(omit){
 			delete options.data;
 		}
-
-		console.log('signing options', options);
 
 		const authorization: any = this.oauth.authorize(options, token === false ? undefined : token);
 
