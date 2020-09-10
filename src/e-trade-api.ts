@@ -89,6 +89,8 @@ export class ETrade {
 			options.url || ''
 		].join('');
 
+		// TODO: implement proper fix
+		// @ts-ignore - TS2790
 		delete options.baseURL;
 
 		if(token === undefined || token === true){
@@ -116,7 +118,7 @@ export class ETrade {
 	}
 
 	private async request<T>(options: AxiosRequestConfig): Promise<T> {
-		return await this.throttle.acquire(async (resolve, reject) => {
+		return await this.throttle.acquire(async () => {
 			const id = 0 + (++this._id);
 
 			debugRequest(id, options);
@@ -126,7 +128,7 @@ export class ETrade {
 
 				debugResponse(id, results);
 
-				resolve(results);
+				return results;
 			}catch(err){
 				if(err.response){
 					const nErr: ETradeError = new Error(err.response.statusText);
@@ -148,7 +150,7 @@ export class ETrade {
 
 				debugResponse(id, err);
 
-				reject(err)
+				throw err;
 			}
 		});
 	}

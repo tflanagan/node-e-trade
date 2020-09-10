@@ -1,6 +1,6 @@
 {
 	"name": "e-trade-api",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "A promise, JSON-based library for interacting with the E-Trade API.",
 	"keywords": [
 		"ETrade",
@@ -20,36 +20,31 @@
 		"url": "https://github.com/tflanagan",
 		"email": "contact@tristianflanagan.com"
 	},
-	"maintainers": [
-		{
-			"name": "tflanagan",
-			"url": "https://github.com/tflanagan",
-			"email": "contact@tristianflanagan.com"
-		}
-	],
-	"contributors": [
-		"Tristian Flanagan <contact@tristianflanagan.com> (https://github.com/tflanagan)"
-	],
-	"main": "./dist/e-trade.js",
-	"types": "./dist/e-trade.d.ts",
+	"maintainers": [],
+	"contributors": [],
+	"main": "./dist/e-trade-api.js",
+	"types": "./dist/e-trade-api.d.ts",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/tflanagan/node-e-trade.git"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "node build.js",
 		"cleanup": "rm -rf ./dist/*",
 		"reinstall": "rm -rf node_modules/ && npm install",
 		"reinstall-dev": "rm -rf node_modules/ && npm install && npm install --dev"
 	},
 	"dependencies": {
-		"@types/debug": "^4.1.5",
-		"@types/node": "^13.13.5",
-		"axios": "^0.19.2",
+		"axios": "^0.20.0",
 		"debug": "^4.1.1",
 		"deepmerge": "^4.2.2",
-		"generic-throttle": "^2.0.1",
+		"generic-throttle": "^3.0.1",
 		"oauth-1.0a": "^2.2.6"
+	},
+	"devDependencies": {
+		"@types/debug": "^4.1.5",
+		"@types/node": "^14.6.2",
+		"typescript": "^4.0.2"
 	},
 	"engines": {
 		"node": ">=10.14.2"
