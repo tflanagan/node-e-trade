@@ -353,6 +353,16 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).PortfolioResponse.AccountPortfolio;
 	}
 
+	async viewLotsDetails({ accountIdKey, positionId }: ViewLotsDetailsRequest): Promise<ViewLotsDetailsResponse> {
+		const requestOptions = this.getBasicRequest({
+			url: `accounts/${accountIdKey}/portfolio/${positionId}.json`
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).PositionLotsResponse;
+	}
+
 	async listAlerts(options?: ListAlertsRequest): Promise<ListAlertsResponse> {
 		const data: Partial<ListAlertsRequest> = {};
 
@@ -1689,9 +1699,14 @@ export interface Transaction {
 	transactionId: number;
 	accountId: string;
 	transactionDate: number;
+	transactionType: string;
 	postDate: number;
 	amount: number;
 	description: string;
+	description2: string;
+	memo: string;
+	storeId: number;
+	imageFlag: boolean;
 	Category: Category;
 	Brokerage: Brokerage;
 }
@@ -1738,4 +1753,14 @@ export interface Brokerage {
 	checkNo: string;
 	orderNo: string;
 	Product: Product[]
+}
+
+export interface ViewLotsDetailsRequest {
+	accountIdKey: string;
+	positionId: number;
+}
+
+export interface ViewLotsDetailsResponse {
+	shortType: number;
+	PositionLot: PositionLot[];
 }
