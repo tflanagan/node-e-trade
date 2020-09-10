@@ -1,5 +1,5 @@
-e-trade
-=======
+e-trade-api
+===========
 
 [![npm license](https://img.shields.io/npm/l/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api) [![npm version](https://img.shields.io/npm/v/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api) [![npm downloads](https://img.shields.io/npm/dm/e-trade-api.svg)](https://www.npmjs.com/package/e-trade-api)
 
@@ -10,7 +10,7 @@ Written in TypeScript.
 Install
 -------
 ```
-$ npm install e-trade
+$ npm install e-trade-api
 ```
 
 Example
