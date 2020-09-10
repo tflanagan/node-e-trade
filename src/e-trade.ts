@@ -155,32 +155,6 @@ export class ETrade {
 
 	/* OAuth Related Methods */
 
-	async requestToken(): Promise<RequestTokenResponse> {
-		const requestOptions = this.getBasicRequest();
-
-		delete requestOptions.baseURL;
-
-		requestOptions.url = [
-			this.settings.urls.oauth,
-			'request_token'
-		].join('');
-
-		requestOptions.data = {
-			oauth_callback: 'oob'
-		};
-
-		this.signRequest(requestOptions, false);
-
-		const results = parseQueryString(await this.request<string>(requestOptions));
-
-		return {
-			oauth_token: '' + results.oauth_token,
-			oauth_token_secret: '' + results.oauth_token_secret,
-			oauth_callback_confirmed: results.oauth_callback_confirmed === 'true',
-			url: `https://us.etrade.com/e/t/etws/authorize?key=${this.settings.key}&token=${results.oauth_token}`
-		};
-	}
-
 	async getAccessToken(options: GetAccessTokenRequest): Promise<GetAccessTokenResponse> {
 		const requestOptions = this.getBasicRequest();
 
@@ -226,6 +200,32 @@ export class ETrade {
 		return await this.request<any>(requestOptions);
 	}
 
+	async requestToken(): Promise<RequestTokenResponse> {
+		const requestOptions = this.getBasicRequest();
+
+		delete requestOptions.baseURL;
+
+		requestOptions.url = [
+			this.settings.urls.oauth,
+			'request_token'
+		].join('');
+
+		requestOptions.data = {
+			oauth_callback: 'oob'
+		};
+
+		this.signRequest(requestOptions, false);
+
+		const results = parseQueryString(await this.request<string>(requestOptions));
+
+		return {
+			oauth_token: '' + results.oauth_token,
+			oauth_token_secret: '' + results.oauth_token_secret,
+			oauth_callback_confirmed: results.oauth_callback_confirmed === 'true',
+			url: `https://us.etrade.com/e/t/etws/authorize?key=${this.settings.key}&token=${results.oauth_token}`
+		};
+	}
+
 	async revokeAccessToken(options: RenewAccessTokenRequest){
 		const requestOptions = this.getBasicRequest();
 
@@ -246,14 +246,49 @@ export class ETrade {
 
 	/* E-Trade API */
 
-	async listAccounts(): Promise<Account[]> {
+	async cancelOrder({ accountIdKey, orderId }: CancelOrderRequest): Promise<CancelOrderResponse> {
 		const requestOptions = this.getBasicRequest({
-			url: 'accounts/list.json'
+			method: 'PUT',
+			url: `accounts/${accountIdKey}/orders/cancel.json`,
+			data: {
+				CancelOrderRequest: {
+					orderId: orderId
+				}
+			}
+		});
+
+		this.signRequest(requestOptions, undefined, true);
+
+		return (await this.request<any>(requestOptions)).CancelOrderResponse;
+	}
+
+	async changePreviewedOrder({ accountIdKey, orderId, orderType, clientOrderId, order }: ChangePreviewedOrderRequest): Promise<PreviewOrderResponse> {
+		const requestOptions = this.getBasicRequest({
+			method: 'PUT',
+			url: `accounts/${accountIdKey}/orders/${orderId}/change/preview.json`,
+			data: {
+				PreviewOrderRequest: {
+					orderType: orderType,
+					clientOrderId: clientOrderId,
+					Order: order
+				}
+			}
+		});
+
+		this.signRequest(requestOptions, undefined, true);
+
+		return (await this.request<any>(requestOptions)).PreviewOrderResponse;
+	}
+
+	async deleteAlert(alertId: number | number[]): Promise<DeleteAlertResponse> {
+		const requestOptions = this.getBasicRequest({
+			method: 'DELETE',
+			url: `user/alerts/${(typeof alertId === 'number' ? alertId : alertId.join(','))}.json`
 		});
 
 		this.signRequest(requestOptions);
 
-		return (await this.request<any>(requestOptions)).AccountListResponse.Accounts.Account;
+		return (await this.request<any>(requestOptions)).AlertsResponse;
 	}
 
  	async getAccountBalances({ accountIdKey, accountType, instType = 'BROKERAGE', realTimeNAV = true }: GetAccountBalancesRequest): Promise<GetAccountBalancesResponse> {
@@ -274,183 +309,6 @@ export class ETrade {
 		this.signRequest(requestOptions);
 
 		return (await this.request<any>(requestOptions)).BalanceResponse;
-	}
-
-	async listTransactions({ accountIdKey, startDate, endDate, sortOrder, marker, count }: ListTransactionsRequest): Promise<ListTransactionsResponse> {
-		const data: Partial<ListTransactionsRequest> = {};
-
-		if(startDate){
-			data.startDate = startDate;
-		}
-
-		if(endDate){
-			data.endDate = endDate;
-		}
-
-		if(sortOrder){
-			data.sortOrder = sortOrder;
-		}
-
-		if(marker){
-			data.marker = marker;
-		}
-
-		if(count){
-			data.count = count;
-		}
-
-		const requestOptions = this.getBasicRequest({
-			url: `accounts/${accountIdKey}/transactions.json`,
-			data: data
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).TransactionListResponse;
-	}
-
-	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<Transaction> {
-		const data: Partial<ListTransactionDetailsRequest> = {};
-
-		if(storeId){
-			data.storeId = storeId;
-		}
-
-		const requestOptions = this.getBasicRequest({
-			url: `accounts/${accountIdKey}/transactions/${transactionId}.json`,
-			data: data
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).TransactionDetailsResponse;
-	}
-
-	async viewPortfolio({ accountIdKey, count, sortBy, sortOrder = 'DESC', marketSession = 'REGULAR', totalsRequired = false, lotsRequired = false, view = 'QUICK' }: ViewPortfolioRequest): Promise<Portfolio[]> {
-		const data: Partial<ViewPortfolioRequest> = {
-			sortOrder: sortOrder,
-			marketSession: marketSession,
-			totalsRequired: totalsRequired,
-			lotsRequired: lotsRequired,
-			view: view
-		};
-
-		if(count){
-			data.count = count;
-		}
-
-		if(sortBy){
-			data.sortBy = sortBy;
-		}
-
-		const requestOptions = this.getBasicRequest({
-			url: `accounts/${accountIdKey}/portfolio.json`,
-			data: data
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).PortfolioResponse.AccountPortfolio;
-	}
-
-	async viewLotsDetails({ accountIdKey, positionId }: ViewLotsDetailsRequest): Promise<ViewLotsDetailsResponse> {
-		const requestOptions = this.getBasicRequest({
-			url: `accounts/${accountIdKey}/portfolio/${positionId}.json`
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).PositionLotsResponse;
-	}
-
-	async listAlerts(options?: ListAlertsRequest): Promise<ListAlertsResponse> {
-		const data: Partial<ListAlertsRequest> = {};
-
-		if(options){
-			if(options.count){
-				data.count = options.count;
-			}
-
-			if(options.category){
-				data.category = options.category;
-			}
-
-			if(options.status){
-				data.status = options.status;
-			}
-
-			if(options.direction){
-				data.direction = options.direction;
-			}
-
-			if(options.search){
-				data.search = options.search;
-			}
-		}
-
-		const requestOptions = this.getBasicRequest({
-			url: 'user/alerts.json',
-			data: data
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).AlertsResponse;
-	}
-
-	async listAlertDetails({ alertId, htmlTags = false }: ListAlertDetailsRequest): Promise<AlertDetails> {
-		const requestOptions = this.getBasicRequest({
-			url: `user/alerts/${alertId}.json`,
-			data: {
-				htmlTags: htmlTags
-			}
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).AlertDetailsResponse;
-	}
-
-	async deleteAlert(alertId: number | number[]): Promise<DeleteAlertResponse> {
-		const requestOptions = this.getBasicRequest({
-			method: 'DELETE',
-			url: `user/alerts/${(typeof alertId === 'number' ? alertId : alertId.join(','))}.json`
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).AlertsResponse;
-	}
-
-	async getQuotes({ symbols, detailFlag, requireEarningsDate = false, overrideSymbolCount = false, skipMiniOptionsCheck = false }: GetQuotesRequest): Promise<QuoteData> {
-		const data: Partial<GetQuotesRequest> = {
-			requireEarningsDate: requireEarningsDate,
-			overrideSymbolCount: overrideSymbolCount,
-			skipMiniOptionsCheck: skipMiniOptionsCheck
-		};
-
-		if(detailFlag){
-			data.detailFlag = detailFlag;
-		}
-
-		const requestOptions = this.getBasicRequest({
-			url: `market/quote/${typeof(symbols) === 'string' ? symbols : symbols.join(',')}.json`,
-			data: data
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).QuoteResponse.QuoteData[0];
-	}
-
-	async lookupProduct(search: string): Promise<LookupProductResponse[]> {
-		const requestOptions = this.getBasicRequest({
-			url: `market/lookup/${search}.json`
-		});
-
-		this.signRequest(requestOptions);
-
-		return (await this.request<any>(requestOptions)).LookupResponse.Data;
 	}
 
 	async getOptionChains({ symbol, expiryYear, expiryMonth, expiryDay, strikePriceNear, noOfStrikes, includeWeekly = false, skipAdjusted = true, optionCategory = 'STANDARD', chainType = 'CALLPUT', priceType = 'ATNM' }: GetOptionChainsRequest): Promise<GetOptionChainsResponse> {
@@ -512,6 +370,85 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).OptionExpireDateResponse.ExpirationDate;
 	}
 
+	async getQuotes({ symbols, detailFlag, requireEarningsDate = false, overrideSymbolCount = false, skipMiniOptionsCheck = false }: GetQuotesRequest): Promise<QuoteData> {
+		const data: Partial<GetQuotesRequest> = {
+			requireEarningsDate: requireEarningsDate,
+			overrideSymbolCount: overrideSymbolCount,
+			skipMiniOptionsCheck: skipMiniOptionsCheck
+		};
+
+		if(detailFlag){
+			data.detailFlag = detailFlag;
+		}
+
+		const requestOptions = this.getBasicRequest({
+			url: `market/quote/${typeof(symbols) === 'string' ? symbols : symbols.join(',')}.json`,
+			data: data
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).QuoteResponse.QuoteData[0];
+	}
+
+	async listAccounts(): Promise<Account[]> {
+		const requestOptions = this.getBasicRequest({
+			url: 'accounts/list.json'
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).AccountListResponse.Accounts.Account;
+	}
+
+	async listAlertDetails({ alertId, htmlTags = false }: ListAlertDetailsRequest): Promise<AlertDetails> {
+		const requestOptions = this.getBasicRequest({
+			url: `user/alerts/${alertId}.json`,
+			data: {
+				htmlTags: htmlTags
+			}
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).AlertDetailsResponse;
+	}
+
+	async listAlerts(options?: ListAlertsRequest): Promise<ListAlertsResponse> {
+		const data: Partial<ListAlertsRequest> = {};
+
+		if(options){
+			if(options.count){
+				data.count = options.count;
+			}
+
+			if(options.category){
+				data.category = options.category;
+			}
+
+			if(options.status){
+				data.status = options.status;
+			}
+
+			if(options.direction){
+				data.direction = options.direction;
+			}
+
+			if(options.search){
+				data.search = options.search;
+			}
+		}
+
+		const requestOptions = this.getBasicRequest({
+			url: 'user/alerts.json',
+			data: data
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).AlertsResponse;
+	}
+
 	async listOrders({ accountIdKey, marker, count, status, fromDate, toDate, symbol, securityType, transactionType, marketSession }: ListOrdersRequest): Promise<ListOrdersResponse> {
 		const data: Partial<ListOrdersRequest> = {};
 
@@ -561,22 +498,83 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).OrdersResponse;
 	}
 
-	async previewOrder({ accountIdKey, orderType, order, clientOrderId }: PreviewOrderRequest): Promise<PreviewOrderResponse> {
+	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<Transaction> {
+		const data: Partial<ListTransactionDetailsRequest> = {};
+
+		if(storeId){
+			data.storeId = storeId;
+		}
+
 		const requestOptions = this.getBasicRequest({
-			method: 'POST',
-			url: `accounts/${accountIdKey}/orders/preview.json`,
+			url: `accounts/${accountIdKey}/transactions/${transactionId}.json`,
+			data: data
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).TransactionDetailsResponse;
+	}
+
+	async listTransactions({ accountIdKey, startDate, endDate, sortOrder, marker, count }: ListTransactionsRequest): Promise<ListTransactionsResponse> {
+		const data: Partial<ListTransactionsRequest> = {};
+
+		if(startDate){
+			data.startDate = startDate;
+		}
+
+		if(endDate){
+			data.endDate = endDate;
+		}
+
+		if(sortOrder){
+			data.sortOrder = sortOrder;
+		}
+
+		if(marker){
+			data.marker = marker;
+		}
+
+		if(count){
+			data.count = count;
+		}
+
+		const requestOptions = this.getBasicRequest({
+			url: `accounts/${accountIdKey}/transactions.json`,
+			data: data
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).TransactionListResponse;
+	}
+
+	async lookupProduct(search: string): Promise<LookupProductResponse[]> {
+		const requestOptions = this.getBasicRequest({
+			url: `market/lookup/${search}.json`
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).LookupResponse.Data;
+	}
+
+	async placeChangedOrder({ accountIdKey, orderId, orderType, order, clientOrderId, previewIds }: PlaceChangedOrderRequest): Promise<PlaceOrderResponse> {
+		const requestOptions = this.getBasicRequest({
+			method: 'PUT',
+			url: `accounts/${accountIdKey}/orders/${orderId}/change/place.json`,
 			data: {
-				PreviewOrderRequest: {
+				PlaceOrderRequest: {
 					orderType: orderType,
 					clientOrderId: clientOrderId,
-					Order: order
+					Order: order,
+					PreviewIds: previewIds
 				}
 			}
 		});
 
 		this.signRequest(requestOptions, undefined, true);
 
-		return (await this.request<any>(requestOptions)).PreviewOrderResponse;
+		return (await this.request<any>(requestOptions)).PlaceOrderResponse;
 	}
 
 	async placeOrder({ accountIdKey, orderType, order, clientOrderId, previewIds }: PlaceOrderRequest): Promise<PlaceOrderResponse> {
@@ -598,26 +596,10 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).PlaceOrderResponse;
 	}
 
-	async cancelOrder({ accountIdKey, orderId }: CancelOrderRequest): Promise<CancelOrderResponse> {
+	async previewOrder({ accountIdKey, orderType, order, clientOrderId }: PreviewOrderRequest): Promise<PreviewOrderResponse> {
 		const requestOptions = this.getBasicRequest({
-			method: 'PUT',
-			url: `accounts/${accountIdKey}/orders/cancel.json`,
-			data: {
-				CancelOrderRequest: {
-					orderId: orderId
-				}
-			}
-		});
-
-		this.signRequest(requestOptions, undefined, true);
-
-		return (await this.request<any>(requestOptions)).CancelOrderResponse;
-	}
-
-	async changePreviewedOrder({ accountIdKey, orderId, orderType, clientOrderId, order }: ChangePreviewedOrderRequest): Promise<PreviewOrderResponse> {
-		const requestOptions = this.getBasicRequest({
-			method: 'PUT',
-			url: `accounts/${accountIdKey}/orders/${orderId}/change/preview.json`,
+			method: 'POST',
+			url: `accounts/${accountIdKey}/orders/preview.json`,
 			data: {
 				PreviewOrderRequest: {
 					orderType: orderType,
@@ -632,23 +614,41 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).PreviewOrderResponse;
 	}
 
-	async placeChangedOrder({ accountIdKey, orderId, orderType, order, clientOrderId, previewIds }: PlaceChangedOrderRequest): Promise<PlaceOrderResponse> {
+	async viewLotsDetails({ accountIdKey, positionId }: ViewLotsDetailsRequest): Promise<ViewLotsDetailsResponse> {
 		const requestOptions = this.getBasicRequest({
-			method: 'PUT',
-			url: `accounts/${accountIdKey}/orders/${orderId}/change/place.json`,
-			data: {
-				PlaceOrderRequest: {
-					orderType: orderType,
-					clientOrderId: clientOrderId,
-					Order: order,
-					PreviewIds: previewIds
-				}
-			}
+			url: `accounts/${accountIdKey}/portfolio/${positionId}.json`
 		});
 
-		this.signRequest(requestOptions, undefined, true);
+		this.signRequest(requestOptions);
 
-		return (await this.request<any>(requestOptions)).PlaceOrderResponse;
+		return (await this.request<any>(requestOptions)).PositionLotsResponse;
+	}
+
+	async viewPortfolio({ accountIdKey, count, sortBy, sortOrder = 'DESC', marketSession = 'REGULAR', totalsRequired = false, lotsRequired = false, view = 'QUICK' }: ViewPortfolioRequest): Promise<Portfolio[]> {
+		const data: Partial<ViewPortfolioRequest> = {
+			sortOrder: sortOrder,
+			marketSession: marketSession,
+			totalsRequired: totalsRequired,
+			lotsRequired: lotsRequired,
+			view: view
+		};
+
+		if(count){
+			data.count = count;
+		}
+
+		if(sortBy){
+			data.sortBy = sortBy;
+		}
+
+		const requestOptions = this.getBasicRequest({
+			url: `accounts/${accountIdKey}/portfolio.json`,
+			data: data
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).PortfolioResponse.AccountPortfolio;
 	}
 
 }
