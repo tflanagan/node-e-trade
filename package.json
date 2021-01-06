@@ -35,7 +35,7 @@
 		"reinstall-dev": "rm -rf node_modules/ && npm install && npm install --dev"
 	},
 	"dependencies": {
-		"axios": "^0.20.0",
+		"axios": "^0.21.1",
 		"debug": "^4.1.1",
 		"deepmerge": "^4.2.2",
 		"generic-throttle": "^3.0.1",
