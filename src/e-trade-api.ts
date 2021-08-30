@@ -650,7 +650,9 @@ export class ETrade {
 
 		this.signRequest(requestOptions);
 
-		return (await this.request<any>(requestOptions)).PortfolioResponse.AccountPortfolio;
+		const response = await this.request<any>(requestOptions);
+
+		return response?.PortfolioResponse?.AccountPortfolio || {};
 	}
 
 }
