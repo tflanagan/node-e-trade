@@ -1,6 +1,6 @@
 {
 	"name": "e-trade-api",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A promise, JSON-based library for interacting with the E-Trade API.",
 	"keywords": [
 		"ETrade",
@@ -35,7 +35,7 @@
 		"reinstall-dev": "rm -rf node_modules/ && npm install && npm install --dev"
 	},
 	"dependencies": {
-		"axios": "^0.20.0",
+		"axios": "^0.21.1",
 		"debug": "^4.1.1",
 		"deepmerge": "^4.2.2",
 		"generic-throttle": "^3.0.1",
