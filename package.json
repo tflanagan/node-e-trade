@@ -1,6 +1,6 @@
 {
 	"name": "e-trade-api",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"description": "A promise, JSON-based library for interacting with the E-Trade API.",
 	"keywords": [
 		"ETrade",

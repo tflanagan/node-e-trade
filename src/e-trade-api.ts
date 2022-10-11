@@ -129,7 +129,7 @@ export class ETrade {
 				debugResponse(id, results);
 
 				return results;
-			}catch(err){
+			}catch(err: any){
 				if(err.response){
 					const nErr: ETradeError = new Error(err.response.statusText);
 
