@@ -779,18 +779,48 @@ export interface GetAccountBalancesResponse {
 
 export interface ListTransactionsRequest {
 	accountIdKey: string;
+	/**
+	 * The earliest date to include in the date range, formatted as MMDDYYYY. History is available for two years.
+	 */
 	startDate?: string;
+	/**
+	 * The latest date to include in the date range, formatted as MMDDYYYY.
+	 */
 	endDate?: string;
 	sortOrder?: sortOrder;
-	marker?: number;
+	/**
+	 * Used for pagination, this specifies this starting point of the set of items to return.
+	 * To page through all the items, repeat the request with the marker from each previous response until you receive a response with a count less than the one you specified, indicating that there are no more items.
+	 */
+	marker?: string;
+	/**
+	 * Number of transactions to return in the response. If specified, must be between 1 and 50 inclusive. Defaults to 50.
+	 */
 	count?: number;
 }
 
 export interface ListTransactionsResponse {
 	pageMarkers: string;
+	/**
+	 * Whether or not there are more transactions on a further page.
+	 */
 	moreTransactions: boolean;
+	/**
+	 * Number of transactions in this response. Equivalent to Transaction.length.
+	 */
 	transactionCount: number;
+	/**
+	 * Total number of transactions across all pages.
+	 */
 	totalCount: number;
+	/**
+	 * URL to retrieve the next set of transactions in the pagination series.
+	 */
+	next?: string;
+	/**
+	 * Used for pagination, this marker should be supplied to the next ListTransactionsRequest to fetch the next page.
+	 */
+	marker?: string;
 	Transaction: Transaction[]
 }
 
@@ -876,7 +906,7 @@ export interface GetOptionExpireDatesRequest {
 
 export interface ListOrdersRequest {
 	accountIdKey: string;
-	marker?: number;
+	marker?: string;
 	count?: number;
 	status?: orderStatus;
 	fromDate?: string;
