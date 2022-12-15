@@ -945,13 +945,13 @@ export interface Event {
 }
 
 export interface OrderEvents {
-	Event: Partial<Event>[];
+	Event: Event[];
 }
 
 export interface ListOrderDetailsResponse {
 	orderId: number;
 	orderType: orderType;
-	OrderDetail: Partial<OrderDetail>[];
+	OrderDetail: OrderDetail[];
 	Events: OrderEvents;
 }
 
