@@ -1762,33 +1762,33 @@ export interface Cash {
 }
 
 interface TransactionBase {
-transactionId: number;
-accountId: string;
-transactionDate: number;
-transactionType: string;
-postDate: number;
-amount: number;
-description: string;
-description2: string;
-memo: string;
-storeId: number;
-imageFlag: boolean;
+	transactionId: number;
+	accountId: string;
+	transactionDate: number;
+	transactionType: string;
+	postDate: number;
+	amount: number;
+	description: string;
+	description2: string;
+	memo: string;
+	storeId: number;
+	imageFlag: boolean;
 }
 
 /**
 * The Transaction Details endpoint returns objects with captialized keys
 */
 export interface TransactionDetail extends TransactionBase {
-Category: Category;
-Brokerage: Brokerage;
+	Category: Category;
+	Brokerage: Brokerage;
 }
 
 /**
 * The List Transactions endpoint returns objects with lowercased keys
 */
 export interface Transaction extends TransactionBase {
-category: Category;
-brokerage: BrokerageBase & { product: Product };
+	category: Category;
+	brokerage: BrokerageBase & { product: Product };
 }  
 
 export interface Account {
