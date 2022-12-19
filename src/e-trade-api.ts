@@ -1788,8 +1788,8 @@ export interface TransactionDetail extends TransactionBase {
 */
 export interface Transaction extends TransactionBase {
 	category: Category;
-	brokerage: BrokerageBase & { product: Product[] };
-}  
+	brokerage: BrokerageBase & { product: Product };
+}
 
 export interface Account {
 	accountId: string;
@@ -1835,7 +1835,7 @@ export interface BrokerageBase {
 }
 
 export interface Brokerage extends BrokerageBase {
-	Product: Product[];
+	Product: Product;
 }
 
 export interface ViewLotsDetailsRequest {
