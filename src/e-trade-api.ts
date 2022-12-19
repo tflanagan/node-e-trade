@@ -1802,12 +1802,14 @@ export interface Account {
 	accountStatus: accountStatus;
 	closedDate: number;
 }
+
 export interface Category {
 	categoryId: string;
 	parentId: string;
 	categoryName: string;
 	parentName: string;
 }
+
 export interface Product {
 	symbol: string;
 	securityType: string;
@@ -1831,13 +1833,16 @@ export interface BrokerageBase {
 	checkNo: string;
 	orderNo: string;
 }
+
 export interface Brokerage extends BrokerageBase {
 	Product: Product;
 }
+
 export interface ViewLotsDetailsRequest {
 	accountIdKey: string;
 	positionId: number;
 }
+
 export interface ViewLotsDetailsResponse {
 	shortType: number;
 	PositionLot: PositionLot[];
