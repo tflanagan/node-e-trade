@@ -510,7 +510,7 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).OrdersResponse.Order[0];
 }
 
-	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<Transaction> {
+	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<TransactionDetail> {
 		const data: Partial<ListTransactionDetailsRequest> = {};
 
 		if(storeId){
