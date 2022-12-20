@@ -500,7 +500,17 @@ export class ETrade {
 		return (await this.request<any>(requestOptions)).OrdersResponse;
 	}
 
-	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<Transaction> {
+	async listOrderDetails({ accountIdKey, orderId }: ListOrderDetailsRequest): Promise<ListOrderDetailsResponse> {
+		const requestOptions = this.getBasicRequest({
+				url: `accounts/${accountIdKey}/orders/${orderId}.json`,
+		});
+
+		this.signRequest(requestOptions);
+
+		return (await this.request<any>(requestOptions)).OrdersResponse.Order[0];
+}
+
+	async listTransactionDetails({ accountIdKey, transactionId, storeId }: ListTransactionDetailsRequest): Promise<TransactionDetail> {
 		const data: Partial<ListTransactionDetailsRequest> = {};
 
 		if(storeId){
@@ -830,6 +840,11 @@ export interface ListTransactionDetailsRequest {
 	storeId?: string;
 }
 
+export interface ListOrderDetailsRequest {
+	accountIdKey: string;
+	orderId: number;
+}
+
 export interface ViewPortfolioRequest {
 	accountIdKey: string;
 	count?: number;
@@ -921,6 +936,23 @@ export interface ListOrdersResponse {
 	marker: string;
 	next: string;
 	Order: Order[]
+}
+
+export interface Event {
+	name: string;
+	dateTime: number;
+	Instrument: Partial<Instrument>[];
+}
+
+export interface OrderEvents {
+	Event: Event[];
+}
+
+export interface ListOrderDetailsResponse {
+	orderId: number;
+	orderType: orderType;
+	OrderDetail: OrderDetail[];
+	Events: OrderEvents;
 }
 
 export interface PreviewOrderRequest {
@@ -1729,7 +1761,7 @@ export interface Cash {
 	moneyMktBalance: number;
 }
 
-export interface Transaction {
+interface TransactionBase {
 	transactionId: number;
 	accountId: string;
 	transactionDate: number;
@@ -1741,8 +1773,22 @@ export interface Transaction {
 	memo: string;
 	storeId: number;
 	imageFlag: boolean;
+}
+
+/**
+* The Transaction Details endpoint returns objects with captialized keys
+*/
+export interface TransactionDetail extends TransactionBase {
 	Category: Category;
 	Brokerage: Brokerage;
+}
+
+/**
+* The List Transactions endpoint returns objects with lowercased keys
+*/
+export interface Transaction extends TransactionBase {
+	category: Category;
+	brokerage: BrokerageBase & { product: Product };
 }
 
 export interface Account {
@@ -1776,7 +1822,7 @@ export interface Product {
 	expiryType: string;
 }
 
-export interface Brokerage {
+export interface BrokerageBase {
 	transactionType: string;
 	quantity: number;
 	price: number;
@@ -1786,7 +1832,10 @@ export interface Brokerage {
 	memo: string;
 	checkNo: string;
 	orderNo: string;
-	Product: Product[]
+}
+
+export interface Brokerage extends BrokerageBase {
+	Product: Product;
 }
 
 export interface ViewLotsDetailsRequest {
